@@ -1,0 +1,35 @@
+name: PR-CI (no deploy, build test)
+
+on:
+  pull_request:
+    branches: [ develop ]
+    paths-ignore:
+      - '**/*.md'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      # 코드 체크아웃
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      # JDK 21 설정 및 Gradle 캐싱
+      - name: Set Up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # Gradle 권한 설정
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # 빌드 테스트
+      - name: Build with Gradle
+        run: ./gradlew clean build -x test --info --stacktrace --no-daemon
+
+      # 도커 테스트
+      - name: Docker build (no push)
+        run: docker build -t temp:test -f Dockerfile .
