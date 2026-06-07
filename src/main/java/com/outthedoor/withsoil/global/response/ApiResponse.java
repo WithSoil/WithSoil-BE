@@ -1,4 +1,4 @@
-package com.moonbak.farmpilot.global.response;
+package com.outthedoor.withsoil.global.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

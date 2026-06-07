@@ -1,13 +1,13 @@
-package com.moonbak.farmpilot;
+package com.outthedoor.withsoil;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FarmpilotApplication {
+public class WithSoilApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FarmpilotApplication.class, args);
+		SpringApplication.run(WithSoilApplication.class, args);
 	}
 
 }

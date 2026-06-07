@@ -1,6 +1,6 @@
-package com.moonbak.farmpilot.global.aop;
+package com.outthedoor.withsoil.global.aop;
 
-import com.moonbak.farmpilot.global.exeption.BaseException;
+import com.outthedoor.withsoil.global.exeption.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExceptionLoggingAspect {
 
-    @Pointcut("execution(* com.moonbak.farmpilot.api..service..*(..))")
+    @Pointcut("execution(* com.outthedoor.withsoil.api..service..*(..))")
     private void applicationLayer() {}
 
     // 메서드를 실행하다가 에러(Exception)가 터졌을 때만 작동

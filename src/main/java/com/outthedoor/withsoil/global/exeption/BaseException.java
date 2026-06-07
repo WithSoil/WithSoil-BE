@@ -1,6 +1,6 @@
-package com.moonbak.farmpilot.global.exeption;
+package com.outthedoor.withsoil.global.exeption;
 
-import com.moonbak.farmpilot.global.response.ErrorStatus;
+import com.outthedoor.withsoil.global.response.ErrorStatus;
 import lombok.Getter;
 
 @Getter

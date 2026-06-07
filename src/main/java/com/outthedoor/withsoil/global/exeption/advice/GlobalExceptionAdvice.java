@@ -1,8 +1,8 @@
-package com.moonbak.farmpilot.global.exeption.advice;
+package com.outthedoor.withsoil.global.exeption.advice;
 
-import com.moonbak.farmpilot.global.exeption.BaseException;
-import com.moonbak.farmpilot.global.response.ApiResponse;
-import com.moonbak.farmpilot.global.response.ErrorStatus;
+import com.outthedoor.withsoil.global.exeption.BaseException;
+import com.outthedoor.withsoil.global.response.ApiResponse;
+import com.outthedoor.withsoil.global.response.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

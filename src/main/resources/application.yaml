@@ -1,6 +1,6 @@
 spring:
   application:
-    name: farmpilot
+    name: withsoil
 
   # 프로파일 세팅
   profiles:
@@ -26,9 +26,19 @@ logging:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   level:
     root: info                            # 기본 로그는 INFO 레벨
-    com.moonbak: debug                   # 애플리케이션 로그는 DEBUG 레벨
+    com.outthedoor: debug                   # 애플리케이션 로그는 DEBUG 레벨
     org.hibernate.SQL: debug              # JPA 쿼리 로깅
     org.hibernate.orm.jdbc.bind: trace    # JPA 바인딩 변수 로깅 (? -> 실제 값)
+
+# Spring Actuator 세팅
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health     # health만 외부 노출 (헬스체킹용)
+  endpoint:
+    health:
+      show-details: always
 
 # Spring Docs (Swagger UI) 세팅
 springdoc:
