@@ -1,4 +1,4 @@
-package com.moonbak.farmpilot.global.config.swagger;
+package com.outthedoor.withsoil.global.config.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        info = @Info(title = "FarmPilot 백엔드 API", description = "FarmPilot 백엔드 API",
+        info = @Info(title = "WithSoil 백엔드 API", description = "WithSoil 백엔드 API",
                 version = "1.0.0"),
         servers = {
                 @Server(url = "http://localhost:8080", description = "로컬 서버"),

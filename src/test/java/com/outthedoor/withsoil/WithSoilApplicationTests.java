@@ -1,10 +1,10 @@
-package com.moonbak.farmpilot;
+package com.outthedoor.withsoil;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FarmpilotApplicationTests {
+class WithSoilApplicationTests {
 
 	@Test
 	void contextLoads() {
