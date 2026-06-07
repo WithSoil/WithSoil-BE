@@ -29,3 +29,16 @@ logging:
     com.moonbak: debug                   # 애플리케이션 로그는 DEBUG 레벨
     org.hibernate.SQL: debug              # JPA 쿼리 로깅
     org.hibernate.orm.jdbc.bind: trace    # JPA 바인딩 변수 로깅 (? -> 실제 값)
+
+# Spring Docs (Swagger UI) 세팅
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+    try-it-out-enabled: true
+    persist-authorization: true
+  show-actuator: true
