@@ -15,6 +15,9 @@ spring:
         format_sql: true          # 로그에 DB 쿼리 출력 시 포맷팅
     open-in-view: false
 
+  config:
+    import: optional:file:.env[.properties]
+
 # 애플리케이션 포트 세팅
 server:
   port: 8080
