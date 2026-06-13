@@ -39,6 +39,9 @@ out/
 ### application.yml ###
 **/application-local.yml
 
+### compose.yml ###
+compose.prod.yaml
+
 ### .env
 .env
 .env.*

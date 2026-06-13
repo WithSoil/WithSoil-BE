@@ -14,6 +14,7 @@ public enum SuccessStatus {
     SUCCESS_MEMBER_LOGIN(HttpStatus.OK, "로그인 성공"),
     SUCCESS_ARTICLE_GET(HttpStatus.OK, "게시글 조회 성공"),
     SUCCESS_ARTICLE_UPDATE(HttpStatus.OK, "게시글 수정 성공"),
+    SUCCESS_MEMBER_MYPAGE_GET(HttpStatus.OK, "마이페이지 조회 성공"),
 
     /// 201 Created
     SUCCESS_MEMBER_REGISTRATION(HttpStatus.CREATED, "회원가입 성공"),

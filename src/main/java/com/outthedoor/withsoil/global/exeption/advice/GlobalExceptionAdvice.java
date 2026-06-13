@@ -5,6 +5,7 @@ import com.outthedoor.withsoil.global.response.ApiResponse;
 import com.outthedoor.withsoil.global.response.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,8 +21,24 @@ public class GlobalExceptionAdvice {
                 .body(ApiResponse.failOnly(e.getErrorStatus()));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(fieldError -> fieldError.getDefaultMessage())
+                .orElse(ErrorStatus.BAD_REQUEST_INVALID_INPUT.getMessage());
+
+        return ResponseEntity
+                .status(ErrorStatus.BAD_REQUEST_INVALID_INPUT.getStatusCode())
+                .body(ApiResponse.fail(ErrorStatus.BAD_REQUEST_INVALID_INPUT.getStatusCode(), message));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
+
+        log.error("[Exception] 처리되지 않은 예외가 발생했습니다.", e);
 
         return ResponseEntity
                 .status(500)
