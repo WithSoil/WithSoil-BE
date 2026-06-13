@@ -1,0 +1,59 @@
+package com.outthedoor.withsoil.api.member.controller;
+
+import com.outthedoor.withsoil.api.member.dto.request.MemberLoginRequest;
+import com.outthedoor.withsoil.api.member.dto.request.MemberSignupRequest;
+import com.outthedoor.withsoil.api.member.dto.response.MemberLoginResponse;
+import com.outthedoor.withsoil.api.member.dto.response.MemberMypageResponse;
+import com.outthedoor.withsoil.api.member.dto.response.MemberSignupResponse;
+import com.outthedoor.withsoil.api.member.entity.Member;
+import com.outthedoor.withsoil.api.member.service.MemberService;
+import com.outthedoor.withsoil.global.response.ApiResponse;
+import com.outthedoor.withsoil.global.response.SuccessStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@Tag(name = "회원(Member)", description = "회원 관련 API 입니다.")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/members")
+public class MemberController {
+
+    private final MemberService memberService;
+
+    @Operation(summary = "회원가입", description = "이메일, 비밀번호, 이름, 사용자 위치 정보를 받아 회원을 생성합니다.")
+    @PostMapping("/signup")
+    public ResponseEntity<ApiResponse<MemberSignupResponse>> signup(
+            @Valid @RequestBody MemberSignupRequest requestDTO
+    ) {
+        MemberSignupResponse responseDTO = memberService.signup(requestDTO);
+
+        return ApiResponse.success(SuccessStatus.SUCCESS_MEMBER_REGISTRATION, responseDTO);
+    }
+
+    @Operation(summary = "로그인", description = "이메일과 비밀번호를 검증하고 JWT Access Token을 발급합니다.")
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<MemberLoginResponse>> login(
+            @Valid @RequestBody MemberLoginRequest requestDTO
+    ) {
+        MemberLoginResponse responseDTO = memberService.login(requestDTO);
+
+        return ApiResponse.success(SuccessStatus.SUCCESS_MEMBER_LOGIN, responseDTO);
+    }
+
+    @Operation(summary = "마이페이지 조회", description = "로그인한 회원의 정보를 조회합니다.")
+    @SecurityRequirement(name = "bearerAuth")
+    @GetMapping("/mypage")
+    public ResponseEntity<ApiResponse<MemberMypageResponse>> getMypage(
+            @AuthenticationPrincipal(expression = "member") Member member
+    ) {
+        MemberMypageResponse responseDTO = memberService.getMypage(member);
+
+        return ApiResponse.success(SuccessStatus.SUCCESS_MEMBER_MYPAGE_GET, responseDTO);
+    }
+}
