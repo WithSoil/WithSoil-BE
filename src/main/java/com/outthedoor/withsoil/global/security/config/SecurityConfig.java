@@ -1,6 +1,6 @@
 package com.outthedoor.withsoil.global.security.config;
 
-import com.outthedoor.withsoil.global.security.handler.CustomFilterExceptionHandler;
+import com.outthedoor.withsoil.global.exeption.handler.CustomFilterExceptionHandler;
 import com.outthedoor.withsoil.global.security.jwt.JwtAuthenticationFilter;
 import com.outthedoor.withsoil.global.security.jwt.JwtProvider;
 import com.outthedoor.withsoil.global.security.service.CustomUserDetailsService;
