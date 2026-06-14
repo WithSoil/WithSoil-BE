@@ -4,3 +4,8 @@ spring:
     url: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
     username: ${MYSQL_USER}
     password: ${MYSQL_PASSWORD}
+
+# 임시 작물 사진 로컬 저장 - 추후 S3로 이전 예정
+file:
+  upload:
+    diary-photo-dir: /app/uploads/diary-photos

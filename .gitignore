@@ -45,3 +45,6 @@ compose.prod.yaml
 ### .env
 .env
 .env.*
+
+### uploads ###
+uploads/
