@@ -42,9 +42,12 @@ out/
 ### compose.yml ###
 compose.prod.yaml
 
-### .env
+### .env ###
 .env
 .env.*
+
+### img crops ###
+**/img/crops
 
 ### uploads ###
 uploads/
