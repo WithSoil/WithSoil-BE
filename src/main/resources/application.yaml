@@ -2,6 +2,11 @@ spring:
   application:
     name: withsoil
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 30MB
+
   # 프로파일 세팅
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}   # 기본 활성 프로파일 (application-local.yml 사용)
