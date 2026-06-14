@@ -16,6 +16,9 @@ public enum ErrorStatus {
     BAD_REQUEST_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 형식입니다."),
     BAD_REQUEST_INVALID_DIARY_PHOTO(HttpStatus.BAD_REQUEST, "작물 사진은 이미지 파일만 업로드할 수 있습니다."),
 
+    /// 413 Payload Too Large
+    PAYLOAD_TOO_LARGE_UPLOAD_FILE(HttpStatus.PAYLOAD_TOO_LARGE, "업로드 가능한 파일 크기를 초과했습니다."),
+
     /// 401 Unauthorized
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "인증되지 않은 접근입니다."),
     UNAUTHORIZED_INVALID_LOGIN(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),
