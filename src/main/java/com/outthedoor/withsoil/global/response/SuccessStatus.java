@@ -15,14 +15,19 @@ public enum SuccessStatus {
     SUCCESS_ARTICLE_GET(HttpStatus.OK, "게시글 조회 성공"),
     SUCCESS_ARTICLE_UPDATE(HttpStatus.OK, "게시글 수정 성공"),
     SUCCESS_MEMBER_MYPAGE_GET(HttpStatus.OK, "마이페이지 조회 성공"),
+    SUCCESS_DIARY_GET(HttpStatus.OK, "농부일지 조회 성공"),
+    SUCCESS_DIARY_LIST_GET(HttpStatus.OK, "농부일지 목록 조회 성공"),
+    SUCCESS_DIARY_UPDATE(HttpStatus.OK, "농부일지 수정 성공"),
 
     /// 201 Created
     SUCCESS_MEMBER_REGISTRATION(HttpStatus.CREATED, "회원가입 성공"),
     SUCCESS_ARTICLE_CREATE(HttpStatus.CREATED, "게시글 생성 성공"),
+    SUCCESS_DIARY_CREATE(HttpStatus.CREATED, "농부일지 생성 성공"),
 
     /// 204 No Content
     SUCCESS_MEMBER_WITHDRAW(HttpStatus.NO_CONTENT, "회원탈퇴 성공"),
     SUCCESS_ARTICLE_DELETE(HttpStatus.NO_CONTENT, "게시글 삭제 성공"),
+    SUCCESS_DIARY_DELETE(HttpStatus.NO_CONTENT, "농부일지 삭제 성공"),
 
     ;
 

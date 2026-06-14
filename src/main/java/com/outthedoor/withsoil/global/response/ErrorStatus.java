@@ -14,6 +14,7 @@ public enum ErrorStatus {
     BAD_REQUEST_INVALID_INPUT(HttpStatus.BAD_REQUEST, "입력값이 올바르지 않습니다."),
     BAD_REQUEST_INVALID_EMAIL(HttpStatus.BAD_REQUEST, "잘못된 이메일 형식입니다."),
     BAD_REQUEST_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 형식입니다."),
+    BAD_REQUEST_INVALID_DIARY_PHOTO(HttpStatus.BAD_REQUEST, "작물 사진은 이미지 파일만 업로드할 수 있습니다."),
 
     /// 401 Unauthorized
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "인증되지 않은 접근입니다."),
@@ -30,6 +31,8 @@ public enum ErrorStatus {
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
     NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, "해당 이메일을 찾을 수 없습니다."),
     NOT_FOUND_ARTICLE(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다."),
+    NOT_FOUND_DIARY(HttpStatus.NOT_FOUND, "해당 농부일지를 찾을 수 없습니다."),
+    NOT_FOUND_DIARY_PHOTO(HttpStatus.NOT_FOUND, "해당 농부일지 사진을 찾을 수 없습니다."),
 
     /// 409 Conflict
     CONFLICT_DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
