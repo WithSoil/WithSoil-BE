@@ -6,6 +6,7 @@ import com.outthedoor.withsoil.global.response.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -33,6 +34,12 @@ public class GlobalExceptionAdvice {
         return ResponseEntity
                 .status(ErrorStatus.BAD_REQUEST_INVALID_INPUT.getStatusCode())
                 .body(ApiResponse.fail(ErrorStatus.BAD_REQUEST_INVALID_INPUT.getStatusCode(), message));
+    }
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        return ResponseEntity
+                .status(ErrorStatus.PAYLOAD_TOO_LARGE_UPLOAD_FILE.getStatusCode())
+                .body(ApiResponse.failOnly(ErrorStatus.PAYLOAD_TOO_LARGE_UPLOAD_FILE));
     }
 
     @ExceptionHandler(Exception.class)

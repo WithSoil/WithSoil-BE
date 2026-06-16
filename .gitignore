@@ -36,12 +36,21 @@ out/
 ### VS Code ###
 .vscode/
 
+### MacOS ###
+**/.DS_Store
+
 ### application.yml ###
 **/application-local.yml
 
 ### compose.yml ###
 compose.prod.yaml
 
-### .env
+### .env ###
 .env
 .env.*
+
+### img crops ###
+**/img/crops
+
+### uploads ###
+uploads/
