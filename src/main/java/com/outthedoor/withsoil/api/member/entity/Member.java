@@ -43,15 +43,17 @@ public class Member {
     private Role role;                      // 권한
 
     // 멤버 생성 정적 팩토리 메서드 -> 회원가입 시 사용
-    public static Member createMember(String email, String encodedPassword,
-                                      String name, MemberLocation location) {
+    public static Member createMember(String email, String encodedPassword, String name) {
         Member member = new Member();
         member.email = email;
         member.password = encodedPassword;
         member.name = name;
-        member.location = location;
         member.isDeleted = false;
         member.role = Role.ROLE_USER;
         return member;
+    }
+
+    public void updateLocation(MemberLocation location) {
+        this.location = location;
     }
 }

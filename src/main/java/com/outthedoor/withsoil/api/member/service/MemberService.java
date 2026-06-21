@@ -1,7 +1,9 @@
 package com.outthedoor.withsoil.api.member.service;
 
+import com.outthedoor.withsoil.api.member.dto.request.MemberLocationRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberLoginRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberSignupRequest;
+import com.outthedoor.withsoil.api.member.dto.response.MemberLocationResponse;
 import com.outthedoor.withsoil.api.member.dto.response.MemberLoginResponse;
 import com.outthedoor.withsoil.api.member.dto.response.MemberMypageResponse;
 import com.outthedoor.withsoil.api.member.dto.response.MemberSignupResponse;
@@ -36,8 +38,7 @@ public class MemberService {
         Member member = Member.createMember(
                 requestDTO.email(),
                 passwordEncoder.encode(requestDTO.password()),
-                requestDTO.name(),
-                requestDTO.location().toEntity()
+                requestDTO.name()
         );
 
         Member saved = memberRepository.save(member);
@@ -45,6 +46,16 @@ public class MemberService {
         log.info("[Member] 회원가입 성공 - email: {}", saved.getEmail());
 
         return MemberSignupResponse.from(saved);
+    }
+
+    public MemberLocationResponse updateLocation(Member member, MemberLocationRequest requestDTO) {
+        Member foundMember = memberRepository.findByIdAndIsDeleted(member.getId(), false)
+                .orElseThrow(() -> new BaseException(ErrorStatus.NOT_FOUND_USER));
+        foundMember.updateLocation(requestDTO.toEntity());
+
+        log.info("[Member] 위치 정보 수정 성공 - email: {}", foundMember.getEmail());
+
+        return MemberLocationResponse.from(foundMember.getLocation());
     }
 
     // 로그인

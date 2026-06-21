@@ -13,6 +13,10 @@ public record MemberLocationResponse(
         BigDecimal longitude
 ) {
     public static MemberLocationResponse from(MemberLocation location) {
+        if (location == null) {
+            return null;
+        }
+
         return new MemberLocationResponse(
                 location.getSido(),
                 location.getSigungu(),
