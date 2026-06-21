@@ -13,10 +13,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberLocation {
 
-    @Column(name = "location_sido", nullable = false, length = 20)
+    @Column(name = "location_sido", length = 20)
     private String sido;
 
-    @Column(name = "location_sigungu", nullable = false, length = 30)
+    @Column(name = "location_sigungu", length = 30)
     private String sigungu;
 
     @Column(name = "location_eup_myeon_dong", length = 30)
