@@ -14,3 +14,6 @@ file:
   upload:
     diary-photo-dir: uploads/diary-photos
 
+ai:
+  server:
+    base-url: ${AI_SERVER_BASE_URL:http://localhost:8000}
