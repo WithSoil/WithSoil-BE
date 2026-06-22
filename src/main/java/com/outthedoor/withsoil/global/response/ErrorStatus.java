@@ -15,6 +15,8 @@ public enum ErrorStatus {
     BAD_REQUEST_INVALID_EMAIL(HttpStatus.BAD_REQUEST, "잘못된 이메일 형식입니다."),
     BAD_REQUEST_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 형식입니다."),
     BAD_REQUEST_INVALID_DIARY_PHOTO(HttpStatus.BAD_REQUEST, "작물 사진은 이미지 파일만 업로드할 수 있습니다."),
+    BAD_REQUEST_INVALID_AI_REQUEST(HttpStatus.BAD_REQUEST, "AI 요청값이 올바르지 않습니다."),
+    BAD_REQUEST_INVALID_AI_IMAGE(HttpStatus.BAD_REQUEST, "진단 이미지는 이미지 파일만 업로드할 수 있습니다."),
 
     /// 413 Payload Too Large
     PAYLOAD_TOO_LARGE_UPLOAD_FILE(HttpStatus.PAYLOAD_TOO_LARGE, "업로드 가능한 파일 크기를 초과했습니다."),
@@ -39,6 +41,10 @@ public enum ErrorStatus {
 
     /// 409 Conflict
     CONFLICT_DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+
+    /// 502 Bad Gateway
+    BAD_GATEWAY_AI_SERVER_UNAVAILABLE(HttpStatus.BAD_GATEWAY, "AI 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요."),
+    BAD_GATEWAY_AI_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "AI 서버 처리 중 오류가 발생했습니다."),
 
     /// 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
