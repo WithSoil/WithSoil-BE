@@ -33,6 +33,7 @@ import java.util.Map;
 public class AiService {
 
     private static final int CHAT_TITLE_MAX_LENGTH = 30;
+    private static final int CHAT_QUERY_MAX_LENGTH = 500;
 
     private final WebClient webClient;
     private final AiChatRepository aiChatRepository;
@@ -57,6 +58,26 @@ public class AiService {
         aiChatMessageRepository.save(AiChatMessage.create(aiChat, AiChatMessageRole.USER, request.query().trim()));
 
         AiChatResponseDto aiResponse = requestAiChat(request.query());
+        validateAiChatResponse(aiResponse);
+
+        AiChatMessage savedAiMessage = aiChatMessageRepository.save(
+                AiChatMessage.create(aiChat, AiChatMessageRole.ASSISTANT, aiResponse.answer())
+        );
+
+        return AiChatResponseDto.of(aiChat, aiResponse.status(), aiResponse.answer(), savedAiMessage.getMessageDateTime());
+    }
+
+    @Transactional
+    public AiChatResponseDto chatRagWithImage(Member member, Long chatId, String query, MultipartFile file) {
+        validateChatQuery(query);
+        validateImageFile(file);
+
+        AiChat aiChat = getOrCreateChat(member, chatId, query);
+        String userMessage = query.trim() + "\n\n[이미지 첨부: " + getOriginalFilename(file) + "]";
+
+        aiChatMessageRepository.save(AiChatMessage.create(aiChat, AiChatMessageRole.USER, userMessage));
+
+        AiChatResponseDto aiResponse = requestAiChatWithImage(query, file);
         validateAiChatResponse(aiResponse);
 
         AiChatMessage savedAiMessage = aiChatMessageRepository.save(
@@ -136,6 +157,29 @@ public class AiService {
         }
     }
 
+    private AiChatResponseDto requestAiChatWithImage(String query, MultipartFile file) {
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        builder.part("query", query.trim());
+        builder.part("mode", "general");
+        builder.part("file", file.getResource())
+                .filename(getOriginalFilename(file))
+                .contentType(MediaType.parseMediaType(file.getContentType()));
+
+        try {
+            return webClient.post()
+                    .uri("/api/v1/rag/chat/image")
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .body(BodyInserters.fromMultipartData(builder.build()))
+                    .retrieve()
+                    .bodyToMono(AiChatResponseDto.class)
+                    .block();
+        } catch (WebClientRequestException e) {
+            throw new BaseException(ErrorStatus.BAD_GATEWAY_AI_SERVER_UNAVAILABLE, e);
+        } catch (WebClientResponseException e) {
+            throw mapAiServerResponseException(e);
+        }
+    }
+
     private AiChat getOrCreateChat(Member member, Long chatId, String query) {
         if (chatId != null) {
             return getChat(member, chatId);
@@ -162,11 +206,21 @@ public class AiService {
         }
     }
 
+    private void validateChatQuery(String query) {
+        if (!StringUtils.hasText(query) || query.trim().length() > CHAT_QUERY_MAX_LENGTH) {
+            throw new BaseException(ErrorStatus.BAD_REQUEST_INVALID_AI_REQUEST);
+        }
+    }
+
     private void validateDiagnosisRequest(String cropName, MultipartFile file, int topk) {
         if (!StringUtils.hasText(cropName) || topk < 1 || topk > 10) {
             throw new BaseException(ErrorStatus.BAD_REQUEST_INVALID_AI_REQUEST);
         }
 
+        validateImageFile(file);
+    }
+
+    private void validateImageFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new BaseException(ErrorStatus.BAD_REQUEST_INVALID_AI_IMAGE);
         }
@@ -175,6 +229,10 @@ public class AiService {
         if (!StringUtils.hasText(contentType) || !contentType.startsWith("image/")) {
             throw new BaseException(ErrorStatus.BAD_REQUEST_INVALID_AI_IMAGE);
         }
+    }
+
+    private String getOriginalFilename(MultipartFile file) {
+        return StringUtils.hasText(file.getOriginalFilename()) ? file.getOriginalFilename() : "image.jpg";
     }
 
     private BaseException mapAiServerResponseException(WebClientResponseException e) {

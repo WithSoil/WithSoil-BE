@@ -84,6 +84,38 @@ public class AiController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @Operation(
+            summary = "AI 챗봇 이미지 질문",
+            description = "텍스트 질문과 이미지를 함께 AI 서버로 전달합니다. chatId가 없으면 새 채팅방을 생성하고, chatId가 있으면 기존 채팅방에 이어서 저장합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "AI 챗봇 이미지 응답 및 메시지 저장 성공"),
+            @ApiResponse(responseCode = "400", description = "질문 또는 이미지 입력값이 올바르지 않음", content = @Content),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 요청", content = @Content),
+            @ApiResponse(responseCode = "404", description = "채팅방을 찾을 수 없음", content = @Content),
+            @ApiResponse(responseCode = "502", description = "AI 서버 연결 실패 또는 처리 오류", content = @Content)
+    })
+    @PostMapping(value = "/chat/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AiChatResponseDto> chatWithImage(
+            @AuthenticationPrincipal(expression = "member") Member member,
+            @Parameter(description = "이어 대화할 채팅방 ID. 비워두면 새 채팅방을 생성합니다.", example = "1")
+            @RequestParam(value = "chatId", required = false) Long chatId,
+            @Parameter(description = "AI에게 전달할 질문", example = "이 잎 사진을 보고 어떤 문제가 있는지 알려줘.", required = true)
+            @RequestParam("query") String query,
+            @Parameter(
+                    description = "AI에게 함께 전달할 이미지 파일",
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                            schema = @Schema(type = "string", format = "binary")
+                    )
+            )
+            @RequestPart("file") MultipartFile file
+    ) {
+        AiChatResponseDto responseDto = aiService.chatRagWithImage(member, chatId, query, file);
+        return ResponseEntity.ok(responseDto);
+    }
+
     @Operation(summary = "AI 채팅방 목록 조회", description = "로그인한 사용자의 삭제되지 않은 AI 채팅방 목록을 최신순으로 조회합니다. 목록 화면용으로 채팅방 ID, 제목, 생성 일시, 마지막 메시지만 반환합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "AI 채팅방 목록 조회 성공"),
