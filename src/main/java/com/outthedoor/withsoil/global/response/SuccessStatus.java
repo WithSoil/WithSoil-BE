@@ -19,6 +19,9 @@ public enum SuccessStatus {
     SUCCESS_DIARY_GET(HttpStatus.OK, "농부일지 조회 성공"),
     SUCCESS_DIARY_LIST_GET(HttpStatus.OK, "농부일지 목록 조회 성공"),
     SUCCESS_DIARY_UPDATE(HttpStatus.OK, "농부일지 수정 성공"),
+    SUCCESS_WEATHER_FORECAST_GET(HttpStatus.OK, "6시간 후 기상예보 조회 성공"),
+    SUCCESS_PUSH_TOKEN_UPDATE(HttpStatus.OK, "푸시 알림 토큰 등록 성공"),
+    SUCCESS_WEATHER_NOTIFICATION_SEND(HttpStatus.OK, "기상예보 푸시 알림 발송 요청 성공"),
 
     /// 201 Created
     SUCCESS_MEMBER_REGISTRATION(HttpStatus.CREATED, "회원가입 성공"),

@@ -15,6 +15,8 @@ public enum ErrorStatus {
     BAD_REQUEST_INVALID_EMAIL(HttpStatus.BAD_REQUEST, "잘못된 이메일 형식입니다."),
     BAD_REQUEST_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 형식입니다."),
     BAD_REQUEST_INVALID_DIARY_PHOTO(HttpStatus.BAD_REQUEST, "작물 사진은 이미지 파일만 업로드할 수 있습니다."),
+    BAD_REQUEST_LOCATION_REQUIRED(HttpStatus.BAD_REQUEST, "기상 알림을 받으려면 농장 위치가 필요합니다."),
+    BAD_REQUEST_PUSH_TOKEN_REQUIRED(HttpStatus.BAD_REQUEST, "기상 알림을 받으려면 푸시 토큰 등록이 필요합니다."),
 
     /// 413 Payload Too Large
     PAYLOAD_TOO_LARGE_UPLOAD_FILE(HttpStatus.PAYLOAD_TOO_LARGE, "업로드 가능한 파일 크기를 초과했습니다."),
@@ -39,6 +41,9 @@ public enum ErrorStatus {
 
     /// 409 Conflict
     CONFLICT_DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+
+    /// 502 Bad Gateway
+    BAD_GATEWAY_KMA_API(HttpStatus.BAD_GATEWAY, "기상청 예보 정보를 불러오지 못했습니다."),
 
     /// 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
