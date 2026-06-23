@@ -38,6 +38,7 @@ public enum ErrorStatus {
     NOT_FOUND_ARTICLE(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다."),
     NOT_FOUND_DIARY(HttpStatus.NOT_FOUND, "해당 농부일지를 찾을 수 없습니다."),
     NOT_FOUND_DIARY_PHOTO(HttpStatus.NOT_FOUND, "해당 농부일지 사진을 찾을 수 없습니다."),
+    NOT_FOUND_AI_CHAT(HttpStatus.NOT_FOUND, "해당 AI 채팅방을 찾을 수 없습니다."),
 
     /// 409 Conflict
     CONFLICT_DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
