@@ -28,14 +28,15 @@ public class ExceptionLoggingAspect {
         Object[] args = joinPoint.getArgs();
 
         if (ex instanceof BaseException baseEx) {
-
-            log.warn("[Exception] {}.{}() | args={} | {} - {}",
-                    className,
-                    methodName,
-                    args,
-                    baseEx.getClass().getSimpleName(),
-                    baseEx.getMessage()
-            );
+            if (baseEx.getCause() != null) {
+                log.warn("[Exception] {}.{}() | args={} | {} - {}",
+                        className, methodName, args, baseEx.getClass().getSimpleName(),
+                        baseEx.getMessage(), baseEx.getCause());
+            } else {
+                log.warn("[Exception] {}.{}() | args={} | {} - {}",
+                        className, methodName, args, baseEx.getClass().getSimpleName(),
+                        baseEx.getMessage());
+            }
         } else {
             log.error("[Exception] {}.{}() | args={} | {} - {}",
                     className,

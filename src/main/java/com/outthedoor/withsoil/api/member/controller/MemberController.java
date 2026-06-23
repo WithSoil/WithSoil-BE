@@ -1,6 +1,7 @@
 package com.outthedoor.withsoil.api.member.controller;
 
 import com.outthedoor.withsoil.api.member.dto.request.MemberLocationRequest;
+import com.outthedoor.withsoil.api.member.dto.request.MemberPushTokenRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberLoginRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberSignupRequest;
 import com.outthedoor.withsoil.api.member.dto.response.MemberLocationResponse;
@@ -59,6 +60,17 @@ public class MemberController {
         MemberLocationResponse responseDTO = memberService.updateLocation(member, requestDTO);
 
         return ApiResponse.success(SuccessStatus.SUCCESS_MEMBER_LOCATION_UPDATE, responseDTO);
+    }
+
+    @Operation(summary = "푸시 토큰 등록", description = "앱이 발급한 Expo 푸시 토큰을 회원에게 등록합니다.")
+    @SecurityRequirement(name = "bearerAuth")
+    @PatchMapping("/push-token")
+    public ResponseEntity<ApiResponse<Void>> updatePushToken(
+            @AuthenticationPrincipal(expression = "member") Member member,
+            @Valid @RequestBody MemberPushTokenRequest requestDTO
+    ) {
+        memberService.updatePushToken(member, requestDTO);
+        return ApiResponse.successOnly(SuccessStatus.SUCCESS_PUSH_TOKEN_UPDATE);
     }
 
     @Operation(summary = "마이페이지 조회", description = "로그인한 회원의 정보를 조회합니다.")
