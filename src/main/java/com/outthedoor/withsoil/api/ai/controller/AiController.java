@@ -1,10 +1,8 @@
 package com.outthedoor.withsoil.api.ai.controller;
 
 import com.outthedoor.withsoil.api.ai.dto.request.AiChatRequestDto;
-import com.outthedoor.withsoil.api.ai.dto.response.AiChatDetailResponse;
-import com.outthedoor.withsoil.api.ai.dto.response.AiChatResponseDto;
-import com.outthedoor.withsoil.api.ai.dto.response.AiChatSummaryResponse;
-import com.outthedoor.withsoil.api.ai.dto.response.AiDiagnosisResponseDto;
+import com.outthedoor.withsoil.api.ai.dto.request.CropRecommendRequestDto;
+import com.outthedoor.withsoil.api.ai.dto.response.*;
 import com.outthedoor.withsoil.api.ai.service.AiService;
 import com.outthedoor.withsoil.api.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
@@ -184,6 +182,26 @@ public class AiController {
             @RequestParam(value = "topk", defaultValue = "5") int topk
     ) {
         AiDiagnosisResponseDto responseDto = aiService.diagnoseCrop(cropName, file, topk);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @Operation(
+            summary = "맞춤형 작물 추천 및 이력 저장",
+            description = "사용자의 지역 정보와 재배 목적을 바탕으로 FastAPI 서버를 호출하여 맞춤형 작물을 추천받고, 그 결과를 DB에 저장한 뒤 반환합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "작물 추천 및 이력 저장 성공"),
+            @ApiResponse(responseCode = "400", description = "입력값이 올바르지 않음", content = @Content),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 요청", content = @Content),
+            @ApiResponse(responseCode = "404", description = "해당 지역의 데이터가 존재하지 않음", content = @Content),
+            @ApiResponse(responseCode = "502", description = "AI 서버 연결 실패 또는 처리 오류", content = @Content)
+    })
+    @PostMapping("/recommend")
+    public ResponseEntity<CropRecommendResponseDto> recommendCrop(
+            @AuthenticationPrincipal(expression = "member") Member member,
+            @Valid @RequestBody CropRecommendRequestDto requestDto
+    ) {
+        CropRecommendResponseDto responseDto = aiService.recommendCrop(member, requestDto);
         return ResponseEntity.ok(responseDto);
     }
 }
