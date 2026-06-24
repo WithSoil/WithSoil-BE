@@ -92,7 +92,7 @@ public class FarmDiaryService {
         LocalDateTime endDateTime = date.plusDays(1).atStartOfDay();
 
         return farmDiaryRepository
-                .findAllByMemberAndDiaryDateTimeGreaterThanEqualAndDiaryDateTimeLessThanAndIsDeletedFalseOrderByDiaryDateTimeDesc(member, startDateTime, endDateTime)
+                .findAllByMemberAndDiaryDateTimeGreaterThanEqualAndDiaryDateTimeLessThanAndIsDeletedFalseOrderByDiaryDateTimeAsc(member, startDateTime, endDateTime)
                 .stream()
                 .map(FarmDiaryResponse::of)
                 .toList();

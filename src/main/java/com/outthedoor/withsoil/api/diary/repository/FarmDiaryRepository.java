@@ -17,4 +17,10 @@ public interface FarmDiaryRepository extends JpaRepository<FarmDiary, Long> {
             LocalDateTime startDateTime,
             LocalDateTime endDateTime
     );
+
+    List<FarmDiary> findAllByMemberAndDiaryDateTimeGreaterThanEqualAndDiaryDateTimeLessThanAndIsDeletedFalseOrderByDiaryDateTimeAsc(
+            Member member,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime
+    );
 }
