@@ -67,7 +67,7 @@ public class MemberController {
     public ResponseEntity<ApiResponse<MemberMypageResponse>> getMypage(
             @AuthenticationPrincipal(expression = "member") Member member
     ) {
-        MemberMypageResponse responseDTO = memberService.getMypage(member);
+        MemberMypageResponse responseDTO = memberService.getMypage(member.getId());
 
         return ApiResponse.success(SuccessStatus.SUCCESS_MEMBER_MYPAGE_GET, responseDTO);
     }
