@@ -18,8 +18,8 @@ public class CropRecommendDetailDto {
     @Schema(description = "작물 명", example = "콩")
     private String cropName;
 
-    @Schema(description = "추천 점수", example = "95")
-    private int recommendScore;
+    @Schema(description = "추천 점수", example = "95.0")
+    private double recommendScore;
 
     @Schema(description = "AI 추천 한줄 제목", example = "왜 나한테 맞을까요?")
     private String aiReasonTitle;
