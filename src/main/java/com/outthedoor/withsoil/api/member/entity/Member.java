@@ -33,6 +33,9 @@ public class Member {
     @Embedded
     private MemberLocation location;        // 사용자 위치 정보
 
+    @Column(name = "push_token", length = 255)
+    private String pushToken;
+
     @Column(nullable = false)
     private boolean isDeleted;              // 삭제 여부
 
@@ -55,5 +58,9 @@ public class Member {
 
     public void updateLocation(MemberLocation location) {
         this.location = location;
+    }
+
+    public void updatePushToken(String pushToken) {
+        this.pushToken = pushToken;
     }
 }
