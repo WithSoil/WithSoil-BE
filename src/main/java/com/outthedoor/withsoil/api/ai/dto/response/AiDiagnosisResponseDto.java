@@ -22,5 +22,21 @@ public record AiDiagnosisResponseDto(
         String message,
 
         @Schema(description = "진단 신뢰도", example = "0.92")
-        Double confidence
-) {}
+        Double confidence,
+
+        @Schema(description = "진단 결과에 대한 작물 병해 가이드")
+        AiDiagnosisGuideResponse guide
+) {
+
+    public AiDiagnosisResponseDto withGuide(AiDiagnosisGuideResponse guide) {
+        return new AiDiagnosisResponseDto(
+                status,
+                crop,
+                resultType,
+                diagnosis,
+                message,
+                confidence,
+                guide
+        );
+    }
+}

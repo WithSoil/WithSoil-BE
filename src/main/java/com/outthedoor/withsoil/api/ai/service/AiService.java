@@ -12,6 +12,19 @@ import com.outthedoor.withsoil.api.ai.entity.RecommendationHistory;
 import com.outthedoor.withsoil.api.ai.repository.AiChatMessageRepository;
 import com.outthedoor.withsoil.api.ai.repository.AiChatRepository;
 import com.outthedoor.withsoil.api.ai.repository.RecommendationHistoryRepository;
+import com.outthedoor.withsoil.api.ai.dto.response.AiChatDetailResponse;
+import com.outthedoor.withsoil.api.ai.dto.response.AiChatMessageResponse;
+import com.outthedoor.withsoil.api.ai.dto.response.AiChatResponseDto;
+import com.outthedoor.withsoil.api.ai.dto.response.AiChatSummaryResponse;
+import com.outthedoor.withsoil.api.ai.dto.response.AiDiagnosisGuideResponse;
+import com.outthedoor.withsoil.api.ai.dto.response.AiDiagnosisResponseDto;
+import com.outthedoor.withsoil.api.ai.entity.AiChat;
+import com.outthedoor.withsoil.api.ai.entity.AiChatMessage;
+import com.outthedoor.withsoil.api.ai.entity.AiChatMessageRole;
+import com.outthedoor.withsoil.api.ai.entity.DiseaseGuide;
+import com.outthedoor.withsoil.api.ai.repository.AiChatMessageRepository;
+import com.outthedoor.withsoil.api.ai.repository.AiChatRepository;
+import com.outthedoor.withsoil.api.ai.repository.DiseaseGuideRepository;
 import com.outthedoor.withsoil.api.member.entity.Member;
 import com.outthedoor.withsoil.global.exeption.BaseException;
 import com.outthedoor.withsoil.global.response.ErrorStatus;
@@ -41,6 +54,7 @@ public class AiService {
     private final AiChatMessageRepository aiChatMessageRepository;
     private final RecommendationHistoryRepository recommendationHistoryRepository;
     private final ObjectMapper objectMapper;
+    private final DiseaseGuideRepository diseaseGuideRepository;
 
     // 🌟 수정됨: @Value 대신 WebClientConfig에서 만든 빈(Bean)을 주입받습니다.
     public AiService(
@@ -48,13 +62,15 @@ public class AiService {
             AiChatRepository aiChatRepository,
             AiChatMessageRepository aiChatMessageRepository,
             RecommendationHistoryRepository recommendationHistoryRepository,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            DiseaseGuideRepository diseaseGuideRepository
     ) {
         this.webClient = webClient;
         this.aiChatRepository = aiChatRepository;
         this.aiChatMessageRepository = aiChatMessageRepository;
         this.recommendationHistoryRepository = recommendationHistoryRepository;
         this.objectMapper = objectMapper;
+        this.diseaseGuideRepository = diseaseGuideRepository;
     }
 
     @Transactional
@@ -99,6 +115,7 @@ public class AiService {
         } catch (WebClientResponseException e) {
             throw mapAiServerResponseException(e);
         }
+
     }
 
     @Transactional
@@ -175,13 +192,14 @@ public class AiService {
                 .contentType(MediaType.parseMediaType(file.getContentType()));
 
         try {
-            return webClient.post()
+            AiDiagnosisResponseDto response = webClient.post()
                     .uri("/api/v1/ai/diagnose")
                     .contentType(MediaType.MULTIPART_FORM_DATA)
                     .body(BodyInserters.fromMultipartData(builder.build()))
                     .retrieve()
                     .bodyToMono(AiDiagnosisResponseDto.class)
                     .block();
+            return appendDiagnosisGuide(cropName, response);
         } catch (WebClientRequestException e) {
             throw new BaseException(ErrorStatus.BAD_GATEWAY_AI_SERVER_UNAVAILABLE, e);
         } catch (WebClientResponseException e) {
@@ -283,6 +301,49 @@ public class AiService {
 
     private String getOriginalFilename(MultipartFile file) {
         return StringUtils.hasText(file.getOriginalFilename()) ? file.getOriginalFilename() : "image.jpg";
+    }
+
+    private AiDiagnosisResponseDto appendDiagnosisGuide(String requestedCropName, AiDiagnosisResponseDto response) {
+        if (response == null) {
+            throw new BaseException(ErrorStatus.BAD_GATEWAY_AI_SERVER_ERROR);
+        }
+
+        String cropName = StringUtils.hasText(response.crop()) ? response.crop().trim() : requestedCropName.trim();
+        String diseaseName = resolveDiseaseName(cropName, response);
+
+        return diseaseGuideRepository.findByCropNameNormalizedAndDiseaseNameNormalized(
+                        DiseaseGuide.normalize(cropName),
+                        DiseaseGuide.normalize(diseaseName)
+                )
+                .map(AiDiagnosisGuideResponse::from)
+                .map(response::withGuide)
+                .orElse(response.withGuide(null));
+    }
+
+    private String resolveDiseaseName(String cropName, AiDiagnosisResponseDto response) {
+        if (isNormalDiagnosis(response)) {
+            return "정상";
+        }
+
+        if (!StringUtils.hasText(response.diagnosis())) {
+            return "";
+        }
+
+        String diseaseName = response.diagnosis().trim();
+        for (String prefix : List.of(cropName + "_", cropName + " ", cropName + "-", cropName)) {
+            if (diseaseName.startsWith(prefix)) {
+                diseaseName = diseaseName.substring(prefix.length()).trim();
+                break;
+            }
+        }
+        return diseaseName;
+    }
+
+    private boolean isNormalDiagnosis(AiDiagnosisResponseDto response) {
+        String resultType = response.resultType();
+        String diagnosis = response.diagnosis();
+        return (StringUtils.hasText(resultType) && List.of("normal", "healthy").contains(resultType.trim().toLowerCase()))
+                || (StringUtils.hasText(diagnosis) && diagnosis.contains("정상"));
     }
 
     private BaseException mapAiServerResponseException(WebClientResponseException e) {

@@ -3,6 +3,7 @@ package com.outthedoor.withsoil.api.member.service;
 import com.outthedoor.withsoil.api.ai.entity.RecommendationHistory;
 import com.outthedoor.withsoil.api.ai.repository.RecommendationHistoryRepository;
 import com.outthedoor.withsoil.api.member.dto.request.MemberLocationRequest;
+import com.outthedoor.withsoil.api.member.dto.request.MemberPushTokenRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberLoginRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberSignupRequest;
 import com.outthedoor.withsoil.api.member.dto.response.MemberLocationResponse;
@@ -59,6 +60,13 @@ public class MemberService {
         log.info("[Member] 위치 정보 수정 성공 - email: {}", foundMember.getEmail());
 
         return MemberLocationResponse.from(foundMember.getLocation());
+    }
+
+    public void updatePushToken(Member member, MemberPushTokenRequest requestDTO) {
+        Member foundMember = memberRepository.findByIdAndIsDeleted(member.getId(), false)
+                .orElseThrow(() -> new BaseException(ErrorStatus.NOT_FOUND_USER));
+        foundMember.updatePushToken(requestDTO.pushToken());
+        log.info("[Member] 푸시 토큰 등록 성공 - email: {}", foundMember.getEmail());
     }
 
     // 로그인
