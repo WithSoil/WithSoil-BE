@@ -1,6 +1,17 @@
 package com.outthedoor.withsoil.api.ai.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outthedoor.withsoil.api.ai.dto.request.AiChatRequestDto;
+import com.outthedoor.withsoil.api.ai.dto.request.CropRecommendRequestDto;
+import com.outthedoor.withsoil.api.ai.dto.response.*;
+import com.outthedoor.withsoil.api.ai.entity.AiChat;
+import com.outthedoor.withsoil.api.ai.entity.AiChatMessage;
+import com.outthedoor.withsoil.api.ai.entity.AiChatMessageRole;
+import com.outthedoor.withsoil.api.ai.entity.RecommendationHistory;
+import com.outthedoor.withsoil.api.ai.repository.AiChatMessageRepository;
+import com.outthedoor.withsoil.api.ai.repository.AiChatRepository;
+import com.outthedoor.withsoil.api.ai.repository.RecommendationHistoryRepository;
 import com.outthedoor.withsoil.api.ai.dto.response.AiChatDetailResponse;
 import com.outthedoor.withsoil.api.ai.dto.response.AiChatMessageResponse;
 import com.outthedoor.withsoil.api.ai.dto.response.AiChatResponseDto;
@@ -17,7 +28,7 @@ import com.outthedoor.withsoil.api.ai.repository.DiseaseGuideRepository;
 import com.outthedoor.withsoil.api.member.entity.Member;
 import com.outthedoor.withsoil.global.exeption.BaseException;
 import com.outthedoor.withsoil.global.response.ErrorStatus;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
@@ -41,20 +52,70 @@ public class AiService {
     private final WebClient webClient;
     private final AiChatRepository aiChatRepository;
     private final AiChatMessageRepository aiChatMessageRepository;
+    private final RecommendationHistoryRepository recommendationHistoryRepository;
+    private final ObjectMapper objectMapper;
     private final DiseaseGuideRepository diseaseGuideRepository;
 
+    // 🌟 수정됨: @Value 대신 WebClientConfig에서 만든 빈(Bean)을 주입받습니다.
     public AiService(
-            @Value("${ai.server.base-url:http://localhost:8000}") String aiServerBaseUrl,
+            @Qualifier("fastApiWebClient") WebClient webClient,
             AiChatRepository aiChatRepository,
             AiChatMessageRepository aiChatMessageRepository,
+            RecommendationHistoryRepository recommendationHistoryRepository,
+            ObjectMapper objectMapper,
             DiseaseGuideRepository diseaseGuideRepository
     ) {
-        this.webClient = WebClient.builder()
-                .baseUrl(aiServerBaseUrl)
-                .build();
+        this.webClient = webClient;
         this.aiChatRepository = aiChatRepository;
         this.aiChatMessageRepository = aiChatMessageRepository;
+        this.recommendationHistoryRepository = recommendationHistoryRepository;
+        this.objectMapper = objectMapper;
         this.diseaseGuideRepository = diseaseGuideRepository;
+    }
+
+    @Transactional
+    public CropRecommendResponseDto recommendCrop(Member member, CropRecommendRequestDto requestDto) {
+
+        CropRecommendResponseDto aiResponse = requestCropRecommendation(requestDto);
+
+        if (aiResponse == null || aiResponse.getRecommendedCrops() == null || aiResponse.getRecommendedCrops().isEmpty()) {
+            throw new BaseException(ErrorStatus.BAD_GATEWAY_AI_SERVER_ERROR);
+        }
+
+        String responseJsonString;
+        try {
+            responseJsonString = objectMapper.writeValueAsString(aiResponse.getRecommendedCrops());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("추천 결과 저장 중 직렬화 오류가 발생했습니다.", e);
+        }
+
+        RecommendationHistory history = RecommendationHistory.builder()
+                .member(member)
+                .region(requestDto.getRegion())
+                .purpose(requestDto.getPurpose())
+                .responseJson(responseJsonString)
+                .build();
+
+        recommendationHistoryRepository.save(history);
+
+        return aiResponse;
+    }
+
+    private CropRecommendResponseDto requestCropRecommendation(CropRecommendRequestDto requestDto) {
+        try {
+            return webClient.post()
+                    .uri("/api/v1/ai/recommend")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(requestDto)
+                    .retrieve()
+                    .bodyToMono(CropRecommendResponseDto.class)
+                    .block();
+        } catch (WebClientRequestException e) {
+            throw new BaseException(ErrorStatus.BAD_GATEWAY_AI_SERVER_UNAVAILABLE, e);
+        } catch (WebClientResponseException e) {
+            throw mapAiServerResponseException(e);
+        }
+
     }
 
     @Transactional

@@ -1,5 +1,7 @@
 package com.outthedoor.withsoil.api.member.service;
 
+import com.outthedoor.withsoil.api.ai.entity.RecommendationHistory;
+import com.outthedoor.withsoil.api.ai.repository.RecommendationHistoryRepository;
 import com.outthedoor.withsoil.api.member.dto.request.MemberLocationRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberPushTokenRequest;
 import com.outthedoor.withsoil.api.member.dto.request.MemberLoginRequest;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RecommendationHistoryRepository recommendationHistoryRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
@@ -90,7 +93,16 @@ public class MemberService {
 
     // 내 정보 조회(마이페이지)
     @Transactional(readOnly = true)
-    public MemberMypageResponse getMypage(Member member) {
-        return MemberMypageResponse.from(member);
+    public MemberMypageResponse getMypage(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+        RecommendationHistory latestHistory = recommendationHistoryRepository
+                .findFirstByMemberOrderByCreatedAtDesc(member)
+                .orElse(null);
+
+        String recommendationJson = (latestHistory != null) ? latestHistory.getResponseJson() : null;
+
+        return MemberMypageResponse.from(member, recommendationJson);
     }
 }
